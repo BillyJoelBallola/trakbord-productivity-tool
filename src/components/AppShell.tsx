@@ -1,6 +1,7 @@
 "use client";
 
-import Navbar from "./Navbar";
+import { BreadcrumbLinkNav } from "@/components/BreadcrumbLinkNav";
+import Navbar from "@/components/Navbar";
 
 type User = {
   id: string;
@@ -20,6 +21,7 @@ function AppShell({
     <div className="min-h-screen relative">
       <Navbar username={user.username} email={user.email} />
       <main className="w-full">
+        <BreadcrumbLinkNav />
         <div className="px-12 py-4">{children}</div>
       </main>
     </div>

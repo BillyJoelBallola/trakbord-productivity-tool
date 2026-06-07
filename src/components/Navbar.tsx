@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import ModeToggle from "@/components/ModeToggle";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { Briefcase, Settings } from "lucide-react";
+import { BreadcrumbLinkNav } from "./BreadcrumbLinkNav";
 
 const navLinks = [
   { href: "/workspaces", label: "Workspaces", icon: Briefcase },
