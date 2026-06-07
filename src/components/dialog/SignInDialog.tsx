@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogDescription,
+  DialogClose,
 } from "@/components/ui/dialog";
 import InputWithLabel from "@/components/input/InputWithLabel";
 // import { Turnstile } from "@marsidev/react-turnstile";
@@ -20,11 +21,17 @@ import { Loader } from "lucide-react";
 function SignInDialog() {
   const router = useRouter();
   // const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
-
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({ username: "", password: "" });
 
   const isDisabled = isLoading || !formData.username || !formData.password;
+
+  const setDefault = () => {
+    setFormData({
+      username: "",
+      password: "",
+    });
+  };
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,7 +44,10 @@ function SignInDialog() {
         // turnstileToken
       });
       if (response.error) return toast.error(response.error);
-      if (response.success) router.push("/");
+      if (response.success) {
+        setDefault();
+        router.push("/");
+      }
     } catch {
       toast.error("An error occurred while signing in.");
     } finally {
@@ -46,7 +56,7 @@ function SignInDialog() {
   };
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={() => setDefault()}>
       <DialogTrigger asChild>
         <Button variant="outline">Sign In</Button>
       </DialogTrigger>

@@ -26,6 +26,15 @@ function SignUpDialog() {
     confirmPassword: "",
   });
 
+  const setDefault = () => {
+    setFormData({
+      username: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    });
+  };
+
   const isDisabled =
     isLoading ||
     !formData.username ||
@@ -45,7 +54,10 @@ function SignUpDialog() {
       });
 
       if (signUpRes.error) return toast.error(signUpRes.error);
-      if (signUpRes.success) toast.success("Account created! Please sign in.");
+      if (signUpRes.success) {
+        setDefault();
+        toast.success("Account created! Please sign in.");
+      }
     } catch {
       toast.error("An error occurred while signing up.");
     } finally {
@@ -54,7 +66,7 @@ function SignUpDialog() {
   };
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={() => setDefault()}>
       <DialogTrigger asChild>
         <Button>Sign Up</Button>
       </DialogTrigger>

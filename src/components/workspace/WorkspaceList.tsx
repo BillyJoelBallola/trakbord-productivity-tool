@@ -54,7 +54,7 @@ function WorkspaceList({ workspaces }: { workspaces: Workspace[] }) {
             className="cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors"
             onClick={() => router.push(`/workspaces/${workspace.slug}`)}
           >
-            <CardContent className="p-5 space-y-4">
+            <CardContent className="space-y-4">
               {/* Header */}
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">

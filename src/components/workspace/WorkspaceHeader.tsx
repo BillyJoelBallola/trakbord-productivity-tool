@@ -34,7 +34,6 @@ function WorkspaceHeader({
       if (response.error) return toast.error(response.error);
       toast.success("Workspace deleted.");
       router.push("/workspaces");
-      router.refresh();
     } catch {
       toast.error("An error occurred.");
     } finally {

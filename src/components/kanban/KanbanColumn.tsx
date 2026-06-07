@@ -139,7 +139,7 @@ function KanbanColumn({
             strategy={verticalListSortingStrategy}
           >
             {column.tasks.length === 0 ? (
-              <div className="rounded-lg border border-dashed h-20 mt-1 grid place-items-center bg-neutral-100 dark:bg-neutral-700/10">
+              <div className="rounded-lg border border-dashed h-18 mt-1  grid place-items-center bg-neutral-100 dark:bg-neutral-700/10">
                 <span className="text-xs text-muted-foreground">
                   Drag/Add Task
                 </span>

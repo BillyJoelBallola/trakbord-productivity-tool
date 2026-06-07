@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import {
@@ -87,7 +86,6 @@ function TaskDetailModal({
   const [comment, setComment] = useState("");
   const [isCommenting, setIsCommenting] = useState(false);
 
-  // editable fields
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState("MEDIUM");
@@ -249,7 +247,7 @@ function TaskDetailModal({
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Description</label>
                     {isViewer ? (
-                      <p className="text-sm text-muted-foreground">
+                      <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                         {task.description || "No description."}
                       </p>
                     ) : (

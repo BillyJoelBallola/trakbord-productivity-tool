@@ -1,6 +1,8 @@
-import { signOut } from "@/actions/auth.action";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import SignoutDialog from "@/components/dialog/SignOutDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -40,11 +42,7 @@ export function ProfileMenu({
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <form action={signOut} className="w-full">
-            <Button variant="outline" className="w-full" type="submit">
-              Sign Out
-            </Button>
-          </form>
+          <SignoutDialog />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

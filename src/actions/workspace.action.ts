@@ -146,6 +146,8 @@ export async function deleteWorkspace(id: string) {
       where: { workspaceId: id, userId: user.id, role: "OWNER" },
     });
 
+    console.log(member);
+
     if (!member) return { error: "Only the owner can delete this workspace." };
 
     await prisma.workspace.delete({ where: { id } });
