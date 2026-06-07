@@ -20,7 +20,10 @@ export default async function WorkspacesPage() {
         </div>
         <CreateWorkspaceDialog />
       </div>
-      <WorkspaceList workspaces={workspaces ?? []} />
+      <WorkspaceList
+        currentUserId={user ? user.id : null}
+        workspaces={workspaces ?? []}
+      />
     </div>
   );
 }

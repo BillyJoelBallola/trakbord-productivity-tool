@@ -46,6 +46,7 @@ function KanbanColumn({
   onTaskAdded,
   onTaskUpdated,
   onTaskDeleted,
+  onPendingTask,
 }: {
   column: Column;
   projectId: string;
@@ -55,6 +56,7 @@ function KanbanColumn({
   onTaskAdded: (task: Task) => void;
   onTaskUpdated: (task: Task) => void;
   onTaskDeleted: (taskId: string, columnId: string) => void;
+  onPendingTask?: (taskId: string) => void;
 }) {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -77,6 +79,7 @@ function KanbanColumn({
     }
 
     if (response.task) {
+      onPendingTask?.(response.task.id);
       onTaskAdded(response.task);
       setNewTaskTitle("");
       setIsAddingTask(false);

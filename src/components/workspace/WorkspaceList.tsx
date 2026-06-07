@@ -30,7 +30,13 @@ const roleColor: Record<string, string> = {
     "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
 };
 
-function WorkspaceList({ workspaces }: { workspaces: Workspace[] }) {
+function WorkspaceList({
+  currentUserId,
+  workspaces,
+}: {
+  currentUserId: string | null;
+  workspaces: Workspace[];
+}) {
   const router = useRouter();
 
   if (workspaces.length === 0) {
@@ -46,7 +52,10 @@ function WorkspaceList({ workspaces }: { workspaces: Workspace[] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {workspaces.map((workspace) => {
-        const myRole = workspace.members[0]?.role ?? "MEMBER";
+        const currentMember = workspace.members.find(
+          (member) => member.user.id === currentUserId,
+        );
+        const myRole = currentMember?.role ?? "MEMBER";
 
         return (
           <Card

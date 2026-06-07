@@ -39,12 +39,10 @@ type Member = { id: string; username: string; avatar: string | null };
 
 function KanbanBoard({
   project,
-  currentUserId,
   members,
   isViewer,
 }: {
   project: { id: string; columns: Column[] };
-  currentUserId: string;
   members: Member[];
   isViewer: boolean;
 }) {
@@ -55,18 +53,35 @@ function KanbanBoard({
   const columnsRef = useRef(columns);
   const activeTaskRef = useRef<Task | null>(null);
   const isDraggingRef = useRef(false);
+  const pendingTaskIdRef = useRef<string | null>(null);
+  const draggingTaskIdRef = useRef<string | null>(null);
 
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(PointerSensor, {
+      activationConstraint: { distance: 5 },
+      onActivation: () => {
+        isDraggingRef.current = true;
+      },
+    }),
   );
 
-  useEffect(() => {
-    columnsRef.current = columns;
-  }, [columns]);
+  const addTaskToColumn = (columnId: string, task: Task) => {
+    setColumns((prev) =>
+      prev.map((col) => {
+        if (col.id !== columnId) return col;
+        if (col.tasks.some((t) => t.id === task.id)) return col;
+        return { ...col, tasks: [...col.tasks, task] };
+      }),
+    );
+  };
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  useEffect(() => {
+    columnsRef.current = columns;
+  }, [columns]);
 
   useEffect(() => {
     const channel = pusherClient.subscribe(`project-${project.id}`);
@@ -74,11 +89,7 @@ function KanbanBoard({
     channel.bind(
       "task:created",
       ({ task, columnId }: { task: Task; columnId: string }) => {
-        setColumns((prev) =>
-          prev.map((col) =>
-            col.id === columnId ? { ...col, tasks: [...col.tasks, task] } : col,
-          ),
-        );
+        addTaskToColumn(columnId, task);
       },
     );
 
@@ -115,8 +126,7 @@ function KanbanBoard({
         newColumnId: string;
         newOrder: number;
       }) => {
-        // 👇 skip if current user is dragging — their state is already updated
-        if (isDraggingRef.current) return;
+        if (draggingTaskIdRef.current === taskId) return;
 
         setColumns((prev) => {
           const sourceCol = prev.find((c) =>
@@ -133,6 +143,7 @@ function KanbanBoard({
               };
             }
             if (col.id === newColumnId) {
+              if (col.tasks.some((t) => t.id === taskId)) return col;
               const newTasks = [...col.tasks];
               newTasks.splice(newOrder, 0, {
                 ...task,
@@ -154,6 +165,7 @@ function KanbanBoard({
 
   const handleDragStart = (event: DragStartEvent) => {
     isDraggingRef.current = true;
+    draggingTaskIdRef.current = event.active.id as string;
     const task = columnsRef.current
       .flatMap((c) => c.tasks)
       .find((t) => t.id === event.active.id);
@@ -197,6 +209,7 @@ function KanbanBoard({
           return { ...col, tasks: col.tasks.filter((t) => t.id !== activeId) };
         }
         if (col.id === overColumn.id) {
+          if (col.tasks.some((t) => t.id === activeId)) return col;
           const newTasks = [...col.tasks];
           newTasks.splice(insertIndex, 0, {
             ...activeTask,
@@ -213,12 +226,14 @@ function KanbanBoard({
     const { active, over } = event;
     setActiveTask(null);
 
-    setTimeout(() => {
-      isDraggingRef.current = false;
-    }, 1000);
+    // setTimeout(() => {
+    //   isDraggingRef.current = false;
+    //   draggingTaskIdRef.current = null;
+    // }, 2000);
 
     if (!over) {
       isDraggingRef.current = false;
+      draggingTaskIdRef.current = null;
       return;
     }
 
@@ -304,15 +319,7 @@ function KanbanBoard({
             onColumnDeleted={(columnId) =>
               setColumns((prev) => prev.filter((c) => c.id !== columnId))
             }
-            onTaskAdded={(task) =>
-              setColumns((prev) =>
-                prev.map((col) =>
-                  col.id === task.columnId
-                    ? { ...col, tasks: [...col.tasks, task] }
-                    : col,
-                ),
-              )
-            }
+            onTaskAdded={(task) => addTaskToColumn(task.columnId, task)}
             onTaskUpdated={(updatedTask) =>
               setColumns((prev) =>
                 prev.map((col) => ({
@@ -335,6 +342,9 @@ function KanbanBoard({
                 ),
               )
             }
+            onPendingTask={(taskId) => {
+              pendingTaskIdRef.current = taskId;
+            }}
           />
         ))}
 

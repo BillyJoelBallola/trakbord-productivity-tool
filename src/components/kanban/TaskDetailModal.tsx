@@ -194,7 +194,10 @@ function TaskDetailModal({
   return (
     <>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/50 z-50" onClick={onClose} />
+      <div
+        className="fixed inset-0 bg-black/30 backdrop-blur-sm z-50"
+        onClick={onClose}
+      />
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -343,55 +346,60 @@ function TaskDetailModal({
 
                 {/* Sidebar */}
                 <div className="space-y-4">
-                  {/* Priority */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1">
-                      <Flag className="size-3" /> Priority
-                    </label>
-                    {isViewer ? (
-                      <Badge className={`text-xs ${priorityColor[priority]}`}>
-                        {priority}
-                      </Badge>
-                    ) : (
-                      <Select value={priority} onValueChange={setPriority}>
-                        <SelectTrigger className="h-8 text-sm">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {["LOW", "MEDIUM", "HIGH", "URGENT"].map((p) => (
-                            <SelectItem key={p} value={p}>
-                              {p}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  </div>
+                  <div className="grid grid-cols-2 md:grid-cols-1 gap-4">
+                    {/* Priority */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+                        <Flag className="size-3" /> Priority
+                      </label>
+                      {isViewer ? (
+                        <Badge className={`text-xs ${priorityColor[priority]}`}>
+                          {priority}
+                        </Badge>
+                      ) : (
+                        <Select value={priority} onValueChange={setPriority}>
+                          <SelectTrigger className="w-full h-8 text-sm">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {["LOW", "MEDIUM", "HIGH", "URGENT"].map((p) => (
+                              <SelectItem key={p} value={p}>
+                                {p}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
 
-                  {/* Assignee */}
-                  <div className="space-y-1.5">
-                    <label className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1">
-                      <User className="size-3" /> Assignee
-                    </label>
-                    {isViewer ? (
-                      <p className="text-sm">
-                        {task.assignee?.username ?? "Unassigned"}
-                      </p>
-                    ) : (
-                      <Select value={assigneeId} onValueChange={setAssigneeId}>
-                        <SelectTrigger className="h-8 text-sm">
-                          <SelectValue placeholder="Unassigned" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="none">Unassigned</SelectItem>
-                          {members.map((m) => (
-                            <SelectItem key={m.id} value={m.id}>
-                              {m.username}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
+                    {/* Assignee */}
+                    <div className="space-y-1.5">
+                      <label className="text-xs text-muted-foreground uppercase tracking-wide flex items-center gap-1">
+                        <User className="size-3" /> Assignee
+                      </label>
+                      {isViewer ? (
+                        <p className="text-sm">
+                          {task.assignee?.username ?? "Unassigned"}
+                        </p>
+                      ) : (
+                        <Select
+                          value={assigneeId}
+                          onValueChange={setAssigneeId}
+                        >
+                          <SelectTrigger className="w-full h-8 text-sm">
+                            <SelectValue placeholder="Unassigned" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="none">Unassigned</SelectItem>
+                            {members.map((m) => (
+                              <SelectItem key={m.id} value={m.id}>
+                                {m.username}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    </div>
                   </div>
 
                   {/* Due Date */}
