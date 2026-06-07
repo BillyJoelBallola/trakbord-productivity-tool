@@ -31,7 +31,6 @@ export default async function ProjectPage({
       />
       <KanbanBoard
         project={project}
-        currentUserId={user.id}
         members={members}
         isViewer={isViewer ?? false}
       />
