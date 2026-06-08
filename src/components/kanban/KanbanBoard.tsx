@@ -226,11 +226,6 @@ function KanbanBoard({
     const { active, over } = event;
     setActiveTask(null);
 
-    // setTimeout(() => {
-    //   isDraggingRef.current = false;
-    //   draggingTaskIdRef.current = null;
-    // }, 2000);
-
     if (!over) {
       isDraggingRef.current = false;
       draggingTaskIdRef.current = null;
@@ -301,7 +296,7 @@ function KanbanBoard({
   }
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100vh-180px)]">
+    <div className="flex gap-4 overflow-x-auto pb-4 h-[calc(100vh-230px)]">
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}

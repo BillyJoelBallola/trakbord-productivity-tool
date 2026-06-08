@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, List, SquareKanban, Trash2 } from "lucide-react";
 import { deleteProject } from "@/actions/project.action";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
-import Link from "next/link";
 import EditProjectDialog from "../dialog/EditProjectDialog";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type Project = {
   id: string;
@@ -21,14 +22,21 @@ function ProjectHeader({
   project,
   workspaceSlug,
   isOwnerOrAdmin,
+  activeView,
 }: {
   project: Project;
   workspaceSlug: string;
   isOwnerOrAdmin: boolean;
+  activeView: string;
 }) {
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+
+  const viewLinks = [
+    { href: "kanban", label: "Kanban", icon: SquareKanban },
+    { href: "list", label: "List", icon: List },
+  ];
 
   const handleDelete = async () => {
     setIsDeleting(true);
@@ -82,6 +90,17 @@ function ProjectHeader({
             </Button>
           </div>
         )}
+      </div>
+
+      <div className="flex items-center gap-2">
+        {viewLinks.map(({ href, label, icon: Icon }) => (
+          <Button key={href} variant="outline" size="sm" asChild>
+            <Link href={`?view=${href}`}>
+              <Icon className="size-4" />
+              <span>{label}</span>
+            </Link>
+          </Button>
+        ))}
       </div>
 
       <ConfirmDialog

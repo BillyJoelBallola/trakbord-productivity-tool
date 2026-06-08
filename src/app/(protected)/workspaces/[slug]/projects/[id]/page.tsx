@@ -1,17 +1,22 @@
 import { getProject } from "@/actions/project.action";
 import { currentUser } from "@/actions/user.action";
 import { notFound } from "next/navigation";
+
 import KanbanBoard from "@/components/kanban/KanbanBoard";
 import ProjectHeader from "@/components/project/ProjectHeader";
+import ProjectViewList from "@/components/list/ProjectViewList";
 
 export const dynamic = "force-dynamic";
 
 export default async function ProjectPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string; id: string }>;
+  searchParams: Promise<{ view: string }>;
 }) {
   const { id, slug } = await params;
+  const { view } = await searchParams;
   const [project, user] = await Promise.all([getProject(id), currentUser()]);
 
   if (!project || !user) return notFound();
@@ -25,15 +30,24 @@ export default async function ProjectPage({
       <ProjectHeader
         project={project}
         workspaceSlug={slug}
+        activeView={view}
         isOwnerOrAdmin={
           myMember?.role === "OWNER" || myMember?.role === "ADMIN"
         }
       />
-      <KanbanBoard
-        project={project}
-        members={members}
-        isViewer={isViewer ?? false}
-      />
+      {view.includes("kanban") ? (
+        <KanbanBoard
+          project={project}
+          members={members}
+          isViewer={isViewer ?? false}
+        />
+      ) : (
+        <ProjectViewList
+          project={project}
+          members={members}
+          isViewer={isViewer ?? false}
+        />
+      )}
     </div>
   );
 }

@@ -48,7 +48,7 @@ function ProjectList({
               className="cursor-pointer hover:border-indigo-300 dark:hover:border-indigo-700 transition-colors"
               onClick={() =>
                 router.push(
-                  `/workspaces/${workspaceSlug}/projects/${project.id}`,
+                  `/workspaces/${workspaceSlug}/projects/${project.id}?view=kanban`,
                 )
               }
             >
