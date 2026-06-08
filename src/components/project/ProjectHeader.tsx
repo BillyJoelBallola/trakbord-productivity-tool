@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, RotateCw, Trash2 } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { deleteProject } from "@/actions/project.action";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
 import Link from "next/link";
+import EditProjectDialog from "../dialog/EditProjectDialog";
 
 type Project = {
   id: string;
@@ -67,14 +68,17 @@ function ProjectHeader({
         </div>
 
         {isOwnerOrAdmin && (
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setConfirmOpen(true)}
-            className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-          >
-            <Trash2 className="size-4" />
-          </Button>
+          <div className="flex items-center gap-2">
+            <EditProjectDialog project={project} />
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => setConfirmOpen(true)}
+              className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+            >
+              <Trash2 className="size-4" />
+            </Button>
+          </div>
         )}
       </div>
 

@@ -60,42 +60,55 @@ function KanbanColumn({
 }) {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [addTaskLoading, setAddTaskLoading] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const { setNodeRef } = useDroppable({ id: column.id });
 
+  const isDisabled = addTaskLoading || newTaskTitle.trim().length < 3;
+
   const handleAddTask = async () => {
     if (!newTaskTitle.trim()) return;
 
-    const response = await createTask(projectId, {
-      title: newTaskTitle.trim(),
-      columnId: column.id,
-    });
+    setAddTaskLoading(true);
 
-    if (response.error) {
-      toast.error(response.error);
-      return;
-    }
+    try {
+      const response = await createTask(projectId, {
+        title: newTaskTitle.trim(),
+        columnId: column.id,
+      });
 
-    if (response.task) {
-      onPendingTask?.(response.task.id);
-      onTaskAdded(response.task);
-      setNewTaskTitle("");
-      setIsAddingTask(false);
+      if (response.error) {
+        toast.error(response.error);
+        return;
+      }
+
+      if (response.task) {
+        onPendingTask?.(response.task.id);
+        onTaskAdded(response.task);
+        setNewTaskTitle("");
+        setIsAddingTask(false);
+      }
+    } catch {
+      toast.error("An error occurred.");
+    } finally {
+      setAddTaskLoading(false);
     }
   };
 
   const handleDeleteColumn = async () => {
     setIsDeleting(true);
-    const response = await deleteColumn(column.id);
-    if (response.error) {
-      toast.error(response.error);
-    } else {
+
+    try {
+      const response = await deleteColumn(column.id);
+      if (response.error) return toast.error(response.error);
       onColumnDeleted(column.id);
+    } catch (error) {
+    } finally {
+      setIsDeleting(false);
+      setConfirmDelete(false);
     }
-    setIsDeleting(false);
-    setConfirmDelete(false);
   };
 
   return (
@@ -186,8 +199,13 @@ function KanbanColumn({
                   rows={2}
                 />
                 <div className="flex gap-2">
-                  <Button size="sm" className="flex-1" onClick={handleAddTask}>
-                    Add
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    disabled={isDisabled}
+                    onClick={handleAddTask}
+                  >
+                    {addTaskLoading ? "Saving..." : "Add"}
                   </Button>
                   <Button
                     size="sm"

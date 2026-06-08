@@ -3,8 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Settings } from "lucide-react";
-import { updateWorkspace } from "@/actions/workspace.action";
+import { Loader, Settings } from "lucide-react";
+import { updateProject } from "@/actions/project.action";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -17,21 +17,34 @@ import {
 import InputWithLabel from "@/components/input/InputWithLabel";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader } from "lucide-react";
 
-type Workspace = {
+const COLORS = [
+  "#6366f1",
+  "#8b5cf6",
+  "#ec4899",
+  "#ef4444",
+  "#f97316",
+  "#eab308",
+  "#22c55e",
+  "#14b8a6",
+  "#3b82f6",
+];
+
+type Project = {
   id: string;
   name: string;
+  color: string;
   description: string | null;
 };
 
-function EditWorkspaceDialog({ workspace }: { workspace: Workspace }) {
+function EditProjectDialog({ project }: { project: Project }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    name: workspace.name,
-    description: workspace.description ?? "",
+    name: project.name,
+    description: project.description ?? "",
+    color: project.color,
   });
 
   const isDisabled = isLoading || formData.name.trim().length < 2;
@@ -41,9 +54,9 @@ function EditWorkspaceDialog({ workspace }: { workspace: Workspace }) {
     setIsLoading(true);
 
     try {
-      const response = await updateWorkspace(workspace.id, formData);
+      const response = await updateProject(project.id, formData);
       if (response.error) return toast.error(response.error);
-      toast.success("Workspace updated.");
+      toast.success("Project updated.");
       setIsOpen(false);
       router.refresh();
     } catch {
@@ -62,14 +75,16 @@ function EditWorkspaceDialog({ workspace }: { workspace: Workspace }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Edit Workspace</DialogTitle>
-          <DialogDescription>Update workspace details.</DialogDescription>
+          <DialogTitle>Create Project</DialogTitle>
+          <DialogDescription>
+            A project contains a kanban board with tasks.
+          </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <InputWithLabel
-            id="edit-workspace-name"
+            id="project-name"
             label="Name"
-            placeholder="Workspace name"
+            placeholder="e.g. Website Redesign"
             value={formData.name}
             onChange={(v) =>
               setFormData((prev) => ({ ...prev, name: v as string }))
@@ -78,7 +93,7 @@ function EditWorkspaceDialog({ workspace }: { workspace: Workspace }) {
           <div className="space-y-2">
             <Label>Description (optional)</Label>
             <Textarea
-              placeholder="What is this workspace for?"
+              placeholder="What is this project about?"
               value={formData.description}
               onChange={(e) =>
                 setFormData((prev) => ({
@@ -89,6 +104,24 @@ function EditWorkspaceDialog({ workspace }: { workspace: Workspace }) {
               className="resize-none"
               rows={3}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>Color</Label>
+            <div className="flex gap-2">
+              {COLORS.map((color) => (
+                <button
+                  key={color}
+                  type="button"
+                  onClick={() => setFormData((prev) => ({ ...prev, color }))}
+                  className={`size-7 rounded-full transition-transform ${
+                    formData.color === color
+                      ? "scale-110 ring-2 ring-offset-2 ring-neutral-400"
+                      : "hover:scale-110"
+                  }`}
+                  style={{ backgroundColor: color }}
+                />
+              ))}
+            </div>
           </div>
           <Button type="submit" disabled={isDisabled} className="w-full">
             {isLoading ? (
@@ -106,4 +139,4 @@ function EditWorkspaceDialog({ workspace }: { workspace: Workspace }) {
   );
 }
 
-export default EditWorkspaceDialog;
+export default EditProjectDialog;

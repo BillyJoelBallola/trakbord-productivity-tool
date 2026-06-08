@@ -42,7 +42,7 @@ function CreateProjectDialog({ workspaceId }: { workspaceId: string }) {
 
   const isDisabled = isLoading || formData.name.trim().length < 2;
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
 

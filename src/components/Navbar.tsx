@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import ModeToggle from "@/components/ModeToggle";
 import { ProfileMenu } from "@/components/ProfileMenu";
 import { Briefcase, Settings } from "lucide-react";
-import { BreadcrumbLinkNav } from "./BreadcrumbLinkNav";
+import Image from "next/image";
 
 const navLinks = [
   { href: "/workspaces", label: "Workspaces", icon: Briefcase },
@@ -15,9 +15,15 @@ function Navbar({ username, email }: { username?: string; email?: string }) {
     <div className="sticky top-0 right-0 left-0 py-2 px-12 bg-neutral-50 dark:bg-neutral-900 border-b">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h1 className="font-bold font-mono text-muted-foreground">
-            Trakbord
-          </h1>
+          <div className="flex items-center gap-1">
+            <Image
+              src="/trakbord-logo-gray.png"
+              alt="trakbord-logo"
+              width={14}
+              height={14}
+            />
+            <h1 className="font-bold font-mono text-neutral-500">Trakbord</h1>
+          </div>
           {navLinks.map(({ href, label, icon: Icon }) => (
             <Button key={label} variant="outline" asChild>
               <Link href={href} className="flex items-center gap-2">
