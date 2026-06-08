@@ -48,7 +48,11 @@ function ProjectHeader({
     <>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-1 md:gap-3">
-          <Button variant="ghost" size="icon" onClick={() => router.refresh()}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => router.push(`/workspaces/${workspaceSlug}`)}
+          >
             <ArrowLeft className="size-4" />
           </Button>
           <div
