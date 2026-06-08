@@ -44,12 +44,14 @@ function WorkspaceHeader({
   return (
     <>
       <div className="flex items-start justify-between">
-        <div className="flex items-center gap-4">
-          <div className="size-12 rounded-xl bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
-            <Briefcase className="size-6 text-indigo-600 dark:text-indigo-400" />
+        <div className="flex items-center gap-2 md:gap-4">
+          <div className="size-8 md:size-12 rounded-xl bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+            <Briefcase className="size-4 md:size-6 text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
-            <h1 className="text-2xl font-semibold">{workspace.name}</h1>
+            <h1 className="text-md md:text-2xl font-semibold">
+              {workspace.name}
+            </h1>
             {workspace.description && (
               <p className="text-sm text-muted-foreground">
                 {workspace.description}

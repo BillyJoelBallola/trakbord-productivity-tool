@@ -40,7 +40,7 @@ function ProfileSection({ user }: { user: User }) {
     <form onSubmit={handleSubmit} className="space-y-5">
       <p className="font-medium text-muted-foreground">Profile information</p>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-4">
         <InputWithLabel
           id="username"
           label="Username"
@@ -67,8 +67,8 @@ function ProfileSection({ user }: { user: User }) {
         />
       </div>
 
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isDisabled} size="sm">
+      <div className="flex justify-center md:justify-end">
+        <Button type="submit" disabled={isDisabled} className="w-full md:w-fit">
           {isSaving && <Loader className="size-3.5 animate-spin" />}
           Save changes
         </Button>

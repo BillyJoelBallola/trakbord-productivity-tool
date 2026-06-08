@@ -47,18 +47,16 @@ function ProjectHeader({
   return (
     <>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link href={`/workspaces/${workspaceSlug}`}>
-            <Button variant="ghost" size="icon">
-              <ArrowLeft className="size-4" />
-            </Button>
-          </Link>
+        <div className="flex items-center gap-1 md:gap-3">
+          <Button variant="ghost" size="icon" onClick={() => router.refresh()}>
+            <ArrowLeft className="size-4" />
+          </Button>
           <div
             className="size-4 rounded-full shrink-0"
             style={{ backgroundColor: project.color }}
           />
           <div>
-            <h1 className="text-xl font-semibold">{project.name}</h1>
+            <h1 className="text-md md:text-xl font-semibold">{project.name}</h1>
             {project.description && (
               <p className="text-xs text-muted-foreground">
                 {project.description}

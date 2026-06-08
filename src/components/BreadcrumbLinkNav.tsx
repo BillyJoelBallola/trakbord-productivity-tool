@@ -56,7 +56,7 @@ export function BreadcrumbLinkNav() {
     segment.replace(/-/g, " ").replace(/\b\w/g, (char) => char.toUpperCase());
 
   return (
-    <Breadcrumb className="px-12 mt-4">
+    <Breadcrumb className="mt-4">
       <BreadcrumbList>
         <BreadcrumbItem>
           <BreadcrumbLink asChild>

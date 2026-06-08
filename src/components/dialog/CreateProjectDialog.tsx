@@ -65,9 +65,9 @@ function CreateProjectDialog({ workspaceId }: { workspaceId: string }) {
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button size="sm">
+        <Button>
           <Plus className="size-4" />
-          New Project
+          <span className="hidden md:block">New Project</span>
         </Button>
       </DialogTrigger>
       <DialogContent>

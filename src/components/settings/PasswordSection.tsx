@@ -60,7 +60,7 @@ function PasswordSection() {
         placeholder="Enter current password"
       />
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid md:grid-cols-2 gap-4">
         <InputWithLabel
           id="new-password"
           label="New Password"
@@ -88,8 +88,8 @@ function PasswordSection() {
           placeholder="Enter confirm password"
         />
       </div>
-      <div className="flex justify-end">
-        <Button type="submit" disabled={isDisabled} size="sm">
+      <div className="flex justify-center md:justify-end">
+        <Button type="submit" disabled={isDisabled} className="w-full md:w-fit">
           {isSaving && <Loader className="size-3.5 animate-spin" />}
           Update password
         </Button>

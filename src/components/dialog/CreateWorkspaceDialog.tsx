@@ -55,7 +55,7 @@ function CreateWorkspaceDialog() {
       <DialogTrigger asChild>
         <Button>
           <Plus className="size-4" />
-          New Workspace
+          <span className="hidden md:block">New Workspace</span>
         </Button>
       </DialogTrigger>
       <DialogContent>

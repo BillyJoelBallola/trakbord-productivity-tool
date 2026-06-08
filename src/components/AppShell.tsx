@@ -20,9 +20,9 @@ function AppShell({
   return (
     <div className="min-h-screen relative">
       <Navbar username={user.username} email={user.email} />
-      <main className="w-full">
+      <main className="w-full px-4 md:px-12">
         <BreadcrumbLinkNav />
-        <div className="px-12 py-4">{children}</div>
+        <div className="py-4">{children}</div>
       </main>
     </div>
   );

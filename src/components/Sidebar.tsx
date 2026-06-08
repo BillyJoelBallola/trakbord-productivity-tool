@@ -1,126 +1,57 @@
-"use client";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Briefcase,
-  Settings,
-  ArrowLeftToLine,
-  ArrowRightFromLine,
-  LogOut,
-} from "lucide-react";
-import { signOut } from "@/actions/auth.action";
 import { Button } from "@/components/ui/button";
-import ModeToggle from "@/components/ModeToggle";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { LucideIcon, PanelRight } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
-const navLinks = [
-  { href: "/workspaces", label: "Workspaces", icon: Briefcase },
-  { href: "/settings", label: "Settings", icon: Settings },
-];
-
-type User = {
-  id: string;
-  username: string;
-  email: string;
-  avatar: string | null;
+type navLinksProp = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
 };
 
-function Sidebar({
-  user,
-  isOpen,
-  onToggle,
-}: {
-  user: User;
-  isOpen: boolean;
-  onToggle: () => void;
-}) {
-  const pathname = usePathname();
-
+export function Sidebar({ navLinks }: { navLinks: navLinksProp[] }) {
   return (
-    <aside
-      className={`${
-        isOpen ? "w-64" : "w-16"
-      } fixed left-0 top-0 h-screen border-r bg-background group duration-200 flex flex-col justify-between px-3 py-4 z-40`}
-    >
-      <div className="space-y-6">
-        {/* Logo + Toggle */}
-        <div className="flex items-center justify-between px-2">
-          {isOpen && (
-            <h1 className="text-xl font-bold font-mono">
-              Trak<span className="text-indigo-500">bord</span>
-            </h1>
-          )}
-          <button
-            onClick={onToggle}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-          >
-            {isOpen ? (
-              <ArrowLeftToLine className="size-4" />
-            ) : (
-              <ArrowRightFromLine className="size-4" />
-            )}
-          </button>
-        </div>
-
-        {/* Nav */}
-        <nav className="space-y-1">
-          {navLinks.map(({ href, label, icon: Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={`flex items-center gap-3 px-2 py-2 rounded-lg text-sm font-medium transition-colors ${
-                !isOpen && "justify-center"
-              } ${
-                pathname.startsWith(href)
-                  ? "bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400"
-                  : "text-muted-foreground hover:text-foreground hover:bg-neutral-100 dark:hover:bg-neutral-800"
-              }`}
-            >
-              <Icon className="size-4 shrink-0" />
-              {isOpen && label}
-            </Link>
-          ))}
-        </nav>
-      </div>
-
-      {/* User + Actions */}
-      <div className="space-y-2">
-        {isOpen && (
-          <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-neutral-50 dark:bg-neutral-900">
-            <Avatar className="size-7">
-              <AvatarFallback className="text-xs bg-indigo-100 text-indigo-600">
-                {user.username.slice(0, 2).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.username}</p>
-              <p className="text-xs text-muted-foreground truncate">
-                {user.email}
-              </p>
+    <Sheet>
+      <SheetTrigger asChild>
+        <Button variant="outline" size="icon">
+          <PanelRight className="size-4" />
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="left" aria-describedby="">
+        <SheetHeader>
+          <SheetTitle asChild>
+            <div className="flex items-center gap-1">
+              <Image
+                src="/trakbord-logo-gray.png"
+                alt="trakbord-logo"
+                width={14}
+                height={14}
+              />
+              <h1 className="font-bold font-mono text-neutral-500">Trakbord</h1>
             </div>
-          </div>
-        )}
-        <div className={`flex ${!isOpen ? "flex-col" : ""} items-center gap-2`}>
-          <div className={`${isOpen ? "flex-1" : ""}`}>
-            <form action={signOut} className="w-full">
-              <Button
-                variant="outline"
-                size={isOpen ? "default" : "icon"}
-                className="w-full"
-                type="submit"
+          </SheetTitle>
+        </SheetHeader>
+        <div className="grid px-4">
+          {navLinks.map(({ href, label, icon: Icon }) => (
+            <Button key={label} variant="ghost" asChild>
+              <Link
+                href={href}
+                className="flex items-center justify-start gap-2"
               >
-                <LogOut className="size-4" />
-                {isOpen && "Sign Out"}
-              </Button>
-            </form>
-          </div>
-          <ModeToggle />
+                <Icon className="size-4" />
+                <span>{label}</span>
+              </Link>
+            </Button>
+          ))}
         </div>
-      </div>
-    </aside>
+      </SheetContent>
+    </Sheet>
   );
 }
-
-export default Sidebar;
