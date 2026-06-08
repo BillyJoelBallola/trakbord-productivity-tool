@@ -70,9 +70,10 @@ function DangerSection() {
             <InputWithLabel
               id="username"
               label=""
+              placeholder=""
               value={username}
               onChange={(value) => setUsername(value as string)}
-              placeholder=""
+              className="border-red-500/30 bg-red-500/5"
             />
           </div>
         }

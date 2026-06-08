@@ -36,7 +36,7 @@ function ConfirmDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
+          <DialogDescription asChild>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
           <Button
