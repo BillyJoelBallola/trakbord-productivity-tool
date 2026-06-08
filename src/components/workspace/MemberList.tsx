@@ -155,7 +155,7 @@ function MemberList({
                     defaultValue={role}
                     onValueChange={(v) => handleRoleChange(user.id, v)}
                   >
-                    <SelectTrigger size="sm" className="text-xs">
+                    <SelectTrigger size="sm" className="bg-transparent text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

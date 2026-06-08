@@ -69,8 +69,6 @@ function KanbanColumn({
   const isDisabled = addTaskLoading || newTaskTitle.trim().length < 3;
 
   const handleAddTask = async () => {
-    if (!newTaskTitle.trim()) return;
-
     setAddTaskLoading(true);
 
     try {

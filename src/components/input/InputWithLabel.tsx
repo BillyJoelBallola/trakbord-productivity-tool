@@ -7,7 +7,7 @@ import { useState } from "react";
 
 type InputWithLabelProps = {
   label?: string;
-  type?: "text" | "number" | "password";
+  type?: "text" | "number" | "password" | "email";
   placeholder?: string;
   className?: string;
   showPassClassName?: string;

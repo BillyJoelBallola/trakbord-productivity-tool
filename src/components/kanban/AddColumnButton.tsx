@@ -14,21 +14,30 @@ function AddColumnButton({
   onColumnAdded: (column: { id: string; name: string; order: number }) => void;
 }) {
   const [isAdding, setIsAdding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [name, setName] = useState("");
 
+  const isDisabled = isLoading || name.trim().length < 3;
+
   const handleAdd = async () => {
-    if (!name.trim()) return;
+    setIsLoading(true);
 
-    const response = await addColumn(projectId, name.trim());
-    if (response.error) {
-      toast.error(response.error);
-      return;
-    }
+    try {
+      const response = await addColumn(projectId, name.trim());
+      if (response.error) {
+        toast.error(response.error);
+        return;
+      }
 
-    if (response.column) {
-      onColumnAdded(response.column);
-      setName("");
-      setIsAdding(false);
+      if (response.column) {
+        onColumnAdded(response.column);
+        setName("");
+        setIsAdding(false);
+      }
+    } catch (error) {
+      toast.error("An error occurred.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -45,7 +54,7 @@ function AddColumnButton({
   }
 
   return (
-    <div className="w-72 shrink-0 bg-neutral-50 dark:bg-neutral-900 rounded-xl border p-3 space-y-2">
+    <div className="w-72 shrink-0 h-fit bg-neutral-50 dark:bg-neutral-900 rounded-xl border p-3 space-y-2">
       <input
         autoFocus
         value={name}
@@ -61,8 +70,13 @@ function AddColumnButton({
         className="w-full text-sm p-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-indigo-500"
       />
       <div className="flex items-center gap-2">
-        <Button size="sm" className="flex-1" onClick={handleAdd}>
-          Add
+        <Button
+          size="sm"
+          className="flex-1"
+          disabled={isDisabled}
+          onClick={handleAdd}
+        >
+          {isLoading ? "Saving..." : "Add"}
         </Button>
         <Button
           variant="outline"
