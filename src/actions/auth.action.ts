@@ -8,6 +8,7 @@ import { signUpSchema, signInSchema } from "@/lib/validations";
 import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
 import { cookies } from "next/headers";
+import { verifyTurnstile } from "@/lib/turnstile";
 
 function generateSlug(name: string) {
   return name
@@ -21,6 +22,7 @@ export async function signUp(data: {
   email: string;
   password: string;
   confirmPassword: string;
+  turnstileToken: string;
 }) {
   const req = await request();
   const decision = await authAj.protect(req);
@@ -30,6 +32,9 @@ export async function signUp(data: {
 
   const parsed = signUpSchema.safeParse(data);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const isHuman = await verifyTurnstile(data.turnstileToken);
+  if (!isHuman) return { error: "Captcha verification failed." };
 
   try {
     const existing = await prisma.user.findFirst({
@@ -72,7 +77,11 @@ export async function signUp(data: {
   }
 }
 
-export async function signIn(data: { username: string; password: string }) {
+export async function signIn(data: {
+  username: string;
+  password: string;
+  turnstileToken: string;
+}) {
   const req = await request();
   const decision = await authAj.protect(req);
   if (decision.isDenied()) {
@@ -81,6 +90,9 @@ export async function signIn(data: { username: string; password: string }) {
 
   const parsed = signInSchema.safeParse(data);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const isHuman = await verifyTurnstile(data.turnstileToken);
+  if (!isHuman) return { error: "Captcha verification failed." };
 
   try {
     const user = await prisma.user.findUnique({
