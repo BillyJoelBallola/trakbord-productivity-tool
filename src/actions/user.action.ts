@@ -90,9 +90,13 @@ export async function updatePassword({
   }
 }
 
-export async function deleteAccount() {
+export async function deleteAccount(username: string) {
   const user = await currentUser();
   if (!user) return { error: "Unauthorized." };
+
+  if (user.username !== username) {
+    return { error: "Incorrect username, try again." };
+  }
 
   try {
     await prisma.user.delete({ where: { id: user.id } });
