@@ -22,7 +22,7 @@ export default async function Home() {
               Trak<span className="text-indigo-500">bord</span>
             </h1>
           </div>
-          <p className="text-muted-foreground">
+          <p className="text-center text-muted-foreground">
             Project management for teams. Simple, fast, real-time.
           </p>
         </div>
