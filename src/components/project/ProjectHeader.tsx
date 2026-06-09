@@ -7,6 +7,7 @@ import { ArrowLeft, List, Plus, SquareKanban, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
 import EditProjectDialog from "@/components/dialog/EditProjectDialog";
+import AddColumnDialog from "@/components/dialog/AddColumnDialog";
 import { deleteProject } from "@/actions/project.action";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -93,7 +94,7 @@ function ProjectHeader({
       </div>
 
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 w-fit bg-neutral-100 dark:bg-neutral-900 p-1 rounded-lg">
+        <div className="flex items-center w-fit bg-neutral-100 dark:bg-neutral-900 p-1 rounded-lg">
           {viewLinks.map(({ href, label, icon: Icon }) => (
             <Button
               key={href}
@@ -109,12 +110,8 @@ function ProjectHeader({
             </Button>
           ))}
         </div>
-        {/* TODO: Add column function */}
         {activeView.includes("list") && (
-          <Button variant="outline" size="sm">
-            <Plus className="size-4" />
-            <span className="hidden md:block">Add Column</span>
-          </Button>
+          <AddColumnDialog projectId={project.id} />
         )}
       </div>
 

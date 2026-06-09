@@ -6,9 +6,21 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { MessageSquare } from "lucide-react";
+import { MessageSquare, MoreHorizontal, Trash2 } from "lucide-react";
 import { TaskRow } from "@/components/list/TaskRow";
 import { AddTaskRow } from "@/components/list/AddTaskRow";
+import ConfirmDialog from "@/components/dialog/ConfirmDialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { deleteColumn } from "@/actions/project.action";
+import { toast } from "sonner";
+import { useState, Fragment } from "react";
+import { ServerInsertedHTMLContext, useRouter } from "next/navigation";
 
 type Tag = { tag: { id: string; name: string; color: string } };
 type Task = {
@@ -37,7 +49,19 @@ const columnAccentColors = [
 ];
 
 // Column header
-function ColumnHeader({ column, index }: { column: Column; index: number }) {
+function ColumnHeader({
+  column,
+  index,
+  isViewer,
+  setConfirmDelete,
+  setSelectedColumn,
+}: {
+  column: Column;
+  index: number;
+  isViewer: boolean;
+  setConfirmDelete: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedColumn: React.Dispatch<React.SetStateAction<Column | null>>;
+}) {
   return (
     <div className="flex items-center gap-2 px-3 py-2.5 bg-neutral-100 dark:bg-neutral-900">
       <div
@@ -55,6 +79,35 @@ function ColumnHeader({ column, index }: { column: Column; index: number }) {
           </span>
         </div>
       </AccordionTrigger>
+
+      {!isViewer && (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7 text-muted-foreground"
+            >
+              <MoreHorizontal className="size-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem asChild>
+              <Button
+                variant="ghost"
+                onClick={() => {
+                  setConfirmDelete(true);
+                  setSelectedColumn(column);
+                }}
+                className="text-red-500 hover:text-red-600 dark:hover:bg-red-950 w-full"
+              >
+                <Trash2 className="size-4" />
+                <span>Delete Column</span>
+              </Button>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
     </div>
   );
 }
@@ -93,6 +146,26 @@ function ProjectViewList({
   isViewer: boolean;
 }) {
   const doneColumnName = "done";
+  const router = useRouter();
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedColumn, setSelectedColumn] = useState<Column | null>(null);
+
+  const handleDeleteColumn = async (columnId: string | null) => {
+    if (!columnId) return;
+    setIsDeleting(true);
+
+    try {
+      const response = await deleteColumn(columnId);
+      if (response.error) return toast.error(response.error);
+      router.refresh();
+    } catch (error) {
+      return toast.error("An error occured.");
+    } finally {
+      setIsDeleting(false);
+      setConfirmDelete(false);
+    }
+  };
 
   return (
     <div className="border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
@@ -104,39 +177,66 @@ function ProjectViewList({
           const isDone = column.name.toLowerCase() === doneColumnName;
 
           return (
-            <AccordionItem
-              key={column.id}
-              value={column.id}
-              className="border-b border-neutral-200 dark:border-neutral-800 last:border-0"
-            >
-              <ColumnHeader column={column} index={index} />
+            <Fragment key={column.id}>
+              <AccordionItem
+                key={column.id}
+                value={column.id}
+                className="border-b border-neutral-200 dark:border-neutral-800 last:border-0"
+              >
+                <ColumnHeader
+                  column={column}
+                  index={index}
+                  isViewer={isViewer}
+                  setConfirmDelete={setConfirmDelete}
+                  setSelectedColumn={setSelectedColumn}
+                />
 
-              <AccordionContent className="p-0">
-                <TableHeader />
+                <AccordionContent className="p-0">
+                  <TableHeader />
 
-                {column.tasks.length === 0 ? (
-                  <p className="text-xs text-muted-foreground px-5 py-3">
-                    No tasks in this column.
-                  </p>
-                ) : (
-                  column.tasks.map((task) => (
-                    <TaskRow
-                      key={task.id}
-                      task={task}
-                      isViewer={isViewer}
-                      members={members}
-                      isDone={isDone}
-                    />
-                  ))
-                )}
+                  {column.tasks.length === 0 ? (
+                    <p className="text-xs text-muted-foreground px-5 py-3">
+                      No tasks in this column.
+                    </p>
+                  ) : (
+                    column.tasks.map((task) => (
+                      <TaskRow
+                        key={task.id}
+                        task={task}
+                        isViewer={isViewer}
+                        members={members}
+                        isDone={isDone}
+                      />
+                    ))
+                  )}
 
-                {!isViewer && (
-                  <AddTaskRow columnId={column.id} projectId={project.id} />
-                )}
-              </AccordionContent>
-            </AccordionItem>
+                  {!isViewer && (
+                    <AddTaskRow columnId={column.id} projectId={project.id} />
+                  )}
+                </AccordionContent>
+              </AccordionItem>
+            </Fragment>
           );
         })}
+
+        <ConfirmDialog
+          open={confirmDelete}
+          onOpenChange={setConfirmDelete}
+          title="Delete Column"
+          description={
+            <>
+              Are you sure you want to delete{" "}
+              <span className="font-semibold">{selectedColumn?.name}</span>?
+              <br />
+              All tasks in this column will be deleted.
+            </>
+          }
+          onConfirm={() =>
+            handleDeleteColumn(selectedColumn ? selectedColumn.id : null)
+          }
+          isLoading={isDeleting}
+          confirmLabel="Delete"
+        />
       </Accordion>
     </div>
   );

@@ -75,7 +75,7 @@ function EditProjectDialog({ project }: { project: Project }) {
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Project</DialogTitle>
+          <DialogTitle>Edit Project</DialogTitle>
           <DialogDescription>
             A project contains a kanban board with tasks.
           </DialogDescription>

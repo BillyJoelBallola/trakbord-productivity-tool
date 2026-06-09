@@ -22,7 +22,7 @@ function AppShell({
       <Navbar username={user.username} email={user.email} />
       <main className="w-full px-4 md:px-12">
         <BreadcrumbLinkNav />
-        <div className="py-4">{children}</div>
+        <div className="pt-4 pb-8">{children}</div>
       </main>
     </div>
   );

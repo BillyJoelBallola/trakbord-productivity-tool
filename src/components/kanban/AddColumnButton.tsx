@@ -19,7 +19,7 @@ function AddColumnButton({
 
   const isDisabled = isLoading || name.trim().length < 3;
 
-  const handleAdd = async () => {
+  const handleAddColumn = async () => {
     setIsLoading(true);
 
     try {
@@ -60,7 +60,7 @@ function AddColumnButton({
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter") handleAdd();
+          if (e.key === "Enter") handleAddColumn();
           if (e.key === "Escape") {
             setIsAdding(false);
             setName("");
@@ -74,7 +74,7 @@ function AddColumnButton({
           size="sm"
           className="flex-1"
           disabled={isDisabled}
-          onClick={handleAdd}
+          onClick={handleAddColumn}
         >
           {isLoading ? "Saving..." : "Add"}
         </Button>

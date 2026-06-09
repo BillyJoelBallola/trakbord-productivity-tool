@@ -13,17 +13,17 @@ export default async function ProjectPage({
   searchParams,
 }: {
   params: Promise<{ slug: string; id: string }>;
-  searchParams: Promise<{ view: string }>;
+  searchParams: Promise<{ view?: string }>;
 }) {
   const { id, slug } = await params;
-  const { view } = await searchParams;
+  const { view = "kanban" } = await searchParams;
   const [project, user] = await Promise.all([getProject(id), currentUser()]);
 
   if (!project || !user) return notFound();
 
   const myMember = project.workspace.members.find((m) => m.user.id === user.id);
-  const isViewer = myMember?.role === "VIEWER";
   const members = project.workspace.members.map((m) => m.user);
+  const isViewer = myMember?.role === "VIEWER";
 
   return (
     <div className="space-y-4 h-full">
@@ -35,7 +35,7 @@ export default async function ProjectPage({
           myMember?.role === "OWNER" || myMember?.role === "ADMIN"
         }
       />
-      {view.includes("kanban") ? (
+      {view === "kanban" ? (
         <KanbanBoard
           project={project}
           members={members}
