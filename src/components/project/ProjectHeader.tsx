@@ -12,13 +12,6 @@ import { deleteProject } from "@/actions/project.action";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-type Project = {
-  id: string;
-  name: string;
-  color: string;
-  description: string | null;
-};
-
 function ProjectHeader({
   project,
   workspaceSlug,
@@ -26,7 +19,7 @@ function ProjectHeader({
   isViewer,
   activeView,
 }: {
-  project: Project;
+  project: IProject;
   workspaceSlug: string;
   isOwnerOrAdmin: boolean;
   activeView: string;

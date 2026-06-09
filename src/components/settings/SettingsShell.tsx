@@ -8,20 +8,13 @@ import DangerSection from "@/components/settings/DangerSection";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
-type User = {
-  id: string;
-  username: string;
-  email: string;
-  avatar: string | null;
-};
-
 const navItems = [
   { key: "profile", label: "Profile", icon: User },
   { key: "password", label: "Password", icon: Lock },
   { key: "danger", label: "Delete account", icon: Trash2, danger: true },
 ];
 
-function SettingsShell({ user }: { user: User }) {
+function SettingsShell({ user }: { user: IUser }) {
   const [active, setActive] = useState("profile");
 
   return (

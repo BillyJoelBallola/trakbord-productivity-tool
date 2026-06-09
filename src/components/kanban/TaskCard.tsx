@@ -1,39 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { format } from "date-fns";
 import { Calendar, MessageSquare, GripVertical } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import TaskDetailModal from "@/components/kanban/TaskDetailModal";
-
-type Tag = { tag: { id: string; name: string; color: string } };
-type Task = {
-  id: string;
-  title: string;
-  description: string | null;
-  priority: string;
-  dueDate: Date | null;
-  order: number;
-  columnId: string;
-  projectId: string;
-  assignee: { id: string; username: string; avatar: string | null } | null;
-  tags: Tag[];
-  _count: { comments: number };
-};
-
-const priorityConfig: Record<string, { dot: string; label: string }> = {
-  LOW: {
-    dot: "bg-neutral-300 dark:bg-neutral-600",
-    label: "text-neutral-400 dark:text-neutral-500",
-  },
-  MEDIUM: { dot: "bg-blue-400", label: "text-blue-500 dark:text-blue-400" },
-  HIGH: { dot: "bg-orange-400", label: "text-orange-500 dark:text-orange-400" },
-  URGENT: { dot: "bg-red-500", label: "text-red-500 dark:text-red-400" },
-};
+import { priorityConfig } from "@/lib/priorityConfig";
+import { useSortable } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 function TaskCard({
+  column,
   task,
   isViewer,
   isDragging = false,
@@ -41,11 +19,12 @@ function TaskCard({
   onTaskUpdated,
   onTaskDeleted,
 }: {
-  task: Task;
+  column?: IColumn;
+  task: ITask;
   isViewer: boolean;
   isDragging?: boolean;
   members?: { id: string; username: string; avatar: string | null }[];
-  onTaskUpdated?: (task: Task) => void;
+  onTaskUpdated?: (task: ITask) => void;
   onTaskDeleted?: (taskId: string, columnId: string) => void;
 }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -65,8 +44,12 @@ function TaskCard({
     opacity: isSortableDragging ? 0.3 : 1,
   };
 
+  const doneColumnName = "done";
+
   const p = priorityConfig[task.priority] ?? priorityConfig.MEDIUM;
-  const isOverdue = task.dueDate && new Date(task.dueDate) < new Date();
+  const isDone = column?.name.toLowerCase() === doneColumnName;
+  const isOverdue =
+    task.dueDate && new Date(task.dueDate) < new Date() && !isDone;
 
   return (
     <>
@@ -102,7 +85,14 @@ function TaskCard({
 
         <div className="pl-2 space-y-2.5">
           {/* Title */}
-          <p className="text-sm font-medium leading-snug text-neutral-900 dark:text-neutral-100 pr-4">
+          <p
+            className={cn(
+              "text-sm font-medium leading-snug pr-4",
+              isDone
+                ? "line-through text-muted-foreground"
+                : "text-neutral-900 dark:text-neutral-100",
+            )}
+          >
             {task.title}
           </p>
 

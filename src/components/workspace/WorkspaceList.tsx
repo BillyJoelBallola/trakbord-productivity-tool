@@ -6,6 +6,7 @@ import { Briefcase, FolderOpen, Users } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { roleColor } from "@/lib/colors";
 
 type Workspace = {
   id: string;
@@ -18,16 +19,6 @@ type Workspace = {
     user: { id: string; username: string; avatar: string | null };
   }[];
   _count: { projects: number };
-};
-
-const roleColor: Record<string, string> = {
-  OWNER:
-    "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
-  ADMIN: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  MEMBER:
-    "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200",
-  VIEWER:
-    "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
 };
 
 function WorkspaceList({

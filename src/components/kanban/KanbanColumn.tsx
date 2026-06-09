@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useDroppable } from "@dnd-kit/core";
+import ConfirmDialog from "@/components/dialog/ConfirmDialog";
+import TaskCard from "@/components/kanban/TaskCard";
 import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { toast } from "sonner";
 import { Plus, Trash2, MoreHorizontal } from "lucide-react";
 import { deleteColumn } from "@/actions/project.action";
 import { createTask } from "@/actions/task.action";
@@ -17,25 +18,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import TaskCard from "@/components/kanban/TaskCard";
-import ConfirmDialog from "@/components/dialog/ConfirmDialog";
-
-type Tag = { tag: { id: string; name: string; color: string } };
-type Task = {
-  id: string;
-  title: string;
-  description: string | null;
-  priority: string;
-  dueDate: Date | null;
-  order: number;
-  columnId: string;
-  projectId: string;
-  assignee: { id: string; username: string; avatar: string | null } | null;
-  tags: Tag[];
-  _count: { comments: number };
-};
-type Column = { id: string; name: string; order: number; tasks: Task[] };
-type Member = { id: string; username: string; avatar: string | null };
+import { toast } from "sonner";
 
 function KanbanColumn({
   column,
@@ -48,13 +31,13 @@ function KanbanColumn({
   onTaskDeleted,
   onPendingTask,
 }: {
-  column: Column;
+  column: IColumn;
   projectId: string;
-  members: Member[];
+  members: IMember[];
   isViewer: boolean;
   onColumnDeleted: (columnId: string) => void;
-  onTaskAdded: (task: Task) => void;
-  onTaskUpdated: (task: Task) => void;
+  onTaskAdded: (task: ITask) => void;
+  onTaskUpdated: (task: ITask) => void;
   onTaskDeleted: (taskId: string, columnId: string) => void;
   onPendingTask?: (taskId: string) => void;
 }) {
@@ -159,16 +142,19 @@ function KanbanColumn({
                 </span>
               </div>
             ) : (
-              column.tasks.map((task) => (
-                <TaskCard
-                  key={task.id}
-                  task={task}
-                  isViewer={isViewer}
-                  members={members}
-                  onTaskUpdated={onTaskUpdated}
-                  onTaskDeleted={onTaskDeleted}
-                />
-              ))
+              column.tasks.map((task) => {
+                return (
+                  <TaskCard
+                    column={column}
+                    key={task.id}
+                    task={task}
+                    isViewer={isViewer}
+                    members={members}
+                    onTaskUpdated={onTaskUpdated}
+                    onTaskDeleted={onTaskDeleted}
+                  />
+                );
+              })
             )}
           </SortableContext>
         </div>

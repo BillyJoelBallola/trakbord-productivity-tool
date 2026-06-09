@@ -34,27 +34,27 @@ import {
 } from "@/components/ui/select";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
 
-type Member = { id: string; username: string; avatar: string | null };
-type Comment = {
-  id: string;
-  content: string;
-  createdAt: Date;
-  user: { id: string; username: string; avatar: string | null };
-};
-type Task = {
-  id: string;
-  title: string;
-  description: string | null;
-  priority: string;
-  dueDate: Date | null;
-  columnId: string;
-  projectId: string;
-  assignee: Member | null;
-  createdBy: Member;
-  comments: Comment[];
-  column: { id: string; name: string };
-  tags: { tag: { id: string; name: string; color: string } }[];
-};
+// type Member = { id: string; username: string; avatar: string | null };
+// type Comment = {
+//   id: string;
+//   content: string;
+//   createdAt: Date;
+//   user: { id: string; username: string; avatar: string | null };
+// };
+// type Task = {
+//   id: string;
+//   title: string;
+//   description: string | null;
+//   priority: string;
+//   dueDate: Date | null;
+//   columnId: string;
+//   projectId: string;
+//   assignee: Member | null;
+//   createdBy: Member;
+//   comments: Comment[];
+//   column: { id: string; name: string };
+//   tags: { tag: { id: string; name: string; color: string } }[];
+// };
 
 const priorityColor: Record<string, string> = {
   LOW: "bg-neutral-100 text-neutral-600",
@@ -73,12 +73,12 @@ function TaskDetailModal({
 }: {
   taskId: string;
   isViewer: boolean;
-  members: Member[];
+  members: IMember[];
   onClose: () => void;
   onTaskUpdated: (task: any) => void;
   onTaskDeleted: (taskId: string, columnId: string) => void;
 }) {
-  const [task, setTask] = useState<Task | null>(null);
+  const [task, setTask] = useState<ITaskModal | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -115,7 +115,7 @@ function TaskDetailModal({
     if (!task) return;
     const channel = pusherClient.subscribe(`task-${taskId}`);
 
-    channel.bind("comment:added", ({ comment }: { comment: Comment }) => {
+    channel.bind("comment:added", ({ comment }: { comment: IComment }) => {
       setTask((prev) =>
         prev ? { ...prev, comments: [...prev.comments, comment] } : prev,
       );

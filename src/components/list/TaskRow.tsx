@@ -4,32 +4,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import TaskDetailModal from "@/components/kanban/TaskDetailModal";
 import { Calendar, MessageSquare } from "lucide-react";
 import { format } from "date-fns";
-
-type Member = { id: string; username: string; avatar: string | null };
-type Tag = { tag: { id: string; name: string; color: string } };
-type Task = {
-  id: string;
-  title: string;
-  description: string | null;
-  priority: string;
-  dueDate: Date | null;
-  order: number;
-  columnId: string;
-  projectId: string;
-  assignee: { id: string; username: string; avatar: string | null } | null;
-  tags: Tag[];
-  _count: { comments: number };
-};
-
-const priorityConfig: Record<string, { dot: string; text: string }> = {
-  LOW: {
-    dot: "bg-neutral-300 dark:bg-neutral-600",
-    text: "text-neutral-400 dark:text-neutral-500",
-  },
-  MEDIUM: { dot: "bg-blue-400", text: "text-blue-600 dark:text-blue-400" },
-  HIGH: { dot: "bg-orange-400", text: "text-orange-600 dark:text-orange-400" },
-  URGENT: { dot: "bg-red-500", text: "text-red-600 dark:text-red-400" },
-};
+import { priorityConfig } from "@/lib/priorityConfig";
 
 export function TaskRow({
   task,
@@ -37,14 +12,14 @@ export function TaskRow({
   members,
   isDone,
 }: {
-  task: Task;
+  task: ITask;
   isViewer: boolean;
-  members: Member[];
+  members: IMember[];
   isDone: boolean;
 }) {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const p = priorityConfig[task.priority] ?? priorityConfig.MEDIUM;
+  const priority = priorityConfig[task.priority] ?? priorityConfig.MEDIUM;
   const isOverdue =
     task.dueDate && new Date(task.dueDate) < new Date() && !isDone;
 
@@ -56,7 +31,7 @@ export function TaskRow({
       >
         {/* Title + priority dot + tags */}
         <div className="flex items-center gap-2.5 min-w-0 pl-1">
-          <div className={`size-1.5 rounded-full shrink-0 ${p.dot}`} />
+          <div className={`size-1.5 rounded-full shrink-0 ${priority.dot}`} />
           <span
             className={`text-sm truncate ${
               isDone
@@ -115,7 +90,7 @@ export function TaskRow({
 
         {/* Priority */}
         <div className="hidden md:flex justify-center">
-          <span className={`text-[11px] font-medium ${p.text}`}>
+          <span className={`text-[11px] font-medium ${priority.label}`}>
             {task.priority}
           </span>
         </div>

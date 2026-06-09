@@ -19,13 +19,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader } from "lucide-react";
 
-type Workspace = {
-  id: string;
-  name: string;
-  description: string | null;
-};
-
-function EditWorkspaceDialog({ workspace }: { workspace: Workspace }) {
+function EditWorkspaceDialog({ workspace }: { workspace: IWorkspace }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);

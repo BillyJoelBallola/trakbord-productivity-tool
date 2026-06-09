@@ -22,19 +22,11 @@ import {
 import InputWithLabel from "@/components/input/InputWithLabel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
+import { roleColor } from "@/lib/colors";
 
 type Member = {
   role: string;
-  user: { id: string; username: string; email: string; avatar: string | null };
-};
-
-const roleColor: Record<string, string> = {
-  OWNER:
-    "bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-200",
-  ADMIN: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-  MEMBER:
-    "bg-neutral-100 text-neutral-800 dark:bg-neutral-800 dark:text-neutral-200",
-  VIEWER: "bg-neutral-100 text-neutral-600",
+  user: IUser;
 };
 
 function MemberList({

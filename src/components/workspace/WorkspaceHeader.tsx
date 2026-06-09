@@ -9,11 +9,8 @@ import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
 import EditWorkspaceDialog from "@/components/dialog/EditWorkspaceDialog";
 
-type Workspace = {
-  id: string;
-  name: string;
+type Workspace = IWorkspace & {
   slug: string;
-  description: string | null;
 };
 
 function WorkspaceHeader({

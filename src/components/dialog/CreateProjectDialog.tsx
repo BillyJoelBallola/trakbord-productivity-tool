@@ -17,18 +17,7 @@ import {
 import InputWithLabel from "@/components/input/InputWithLabel";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-
-const COLORS = [
-  "#6366f1",
-  "#8b5cf6",
-  "#ec4899",
-  "#ef4444",
-  "#f97316",
-  "#eab308",
-  "#22c55e",
-  "#14b8a6",
-  "#3b82f6",
-];
+import { COLORS } from "@/lib/colors";
 
 function CreateProjectDialog({ workspaceId }: { workspaceId: string }) {
   const router = useRouter();

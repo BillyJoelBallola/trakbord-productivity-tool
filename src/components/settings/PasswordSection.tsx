@@ -5,8 +5,6 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { updatePassword } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import InputWithLabel from "@/components/input/InputWithLabel";
 
 function PasswordSection() {

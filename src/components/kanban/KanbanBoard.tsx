@@ -20,38 +20,21 @@ import KanbanColumn from "@/components/kanban/KanbanColumn";
 import TaskCard from "@/components/kanban/TaskCard";
 import AddColumnButton from "@/components/kanban/AddColumnButton";
 
-type Tag = { tag: { id: string; name: string; color: string } };
-type Task = {
-  id: string;
-  title: string;
-  description: string | null;
-  priority: string;
-  dueDate: Date | null;
-  order: number;
-  columnId: string;
-  projectId: string;
-  assignee: { id: string; username: string; avatar: string | null } | null;
-  tags: Tag[];
-  _count: { comments: number };
-};
-type Column = { id: string; name: string; order: number; tasks: Task[] };
-type Member = { id: string; username: string; avatar: string | null };
-
 function KanbanBoard({
   project,
   members,
   isViewer,
 }: {
-  project: { id: string; columns: Column[] };
-  members: Member[];
+  project: { id: string; columns: IColumn[] };
+  members: IMember[];
   isViewer: boolean;
 }) {
   const [isMounted, setIsMounted] = useState(false);
-  const [columns, setColumns] = useState<Column[]>(project.columns);
-  const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [columns, setColumns] = useState<IColumn[]>(project.columns);
+  const [activeTask, setActiveTask] = useState<ITask | null>(null);
 
   const columnsRef = useRef(columns);
-  const activeTaskRef = useRef<Task | null>(null);
+  const activeTaskRef = useRef<ITask | null>(null);
   const isDraggingRef = useRef(false);
   const pendingTaskIdRef = useRef<string | null>(null);
   const draggingTaskIdRef = useRef<string | null>(null);
@@ -65,7 +48,7 @@ function KanbanBoard({
     }),
   );
 
-  const addTaskToColumn = (columnId: string, task: Task) => {
+  const addTaskToColumn = (columnId: string, task: ITask) => {
     setColumns((prev) =>
       prev.map((col) => {
         if (col.id !== columnId) return col;
@@ -88,12 +71,12 @@ function KanbanBoard({
 
     channel.bind(
       "task:created",
-      ({ task, columnId }: { task: Task; columnId: string }) => {
+      ({ task, columnId }: { task: ITask; columnId: string }) => {
         addTaskToColumn(columnId, task);
       },
     );
 
-    channel.bind("task:updated", ({ task }: { task: Task }) => {
+    channel.bind("task:updated", ({ task }: { task: ITask }) => {
       setColumns((prev) =>
         prev.map((col) => ({
           ...col,

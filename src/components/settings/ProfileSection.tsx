@@ -6,12 +6,10 @@ import { toast } from "sonner";
 import { Loader } from "lucide-react";
 import { updateProfile } from "@/actions/user.action";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import InputWithLabel from "@/components/input/InputWithLabel";
+import { User } from "@/generated/prisma";
 
-type User = { username: string; email: string };
-
-function ProfileSection({ user }: { user: User }) {
+function ProfileSection({ user }: { user: Pick<User, "username" | "email"> }) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState({

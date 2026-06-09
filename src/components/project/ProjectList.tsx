@@ -1,15 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FolderOpen, Plus } from "lucide-react";
+import { FolderOpen } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import CreateProjectDialog from "@/components/dialog/CreateProjectDialog";
 
-type Project = {
-  id: string;
-  name: string;
-  description: string | null;
-  color: string;
+type Project = IProject & {
   createdAt: Date;
   _count: { columns: number };
 };

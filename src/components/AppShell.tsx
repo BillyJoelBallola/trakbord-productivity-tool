@@ -3,18 +3,11 @@
 import { BreadcrumbLinkNav } from "@/components/BreadcrumbLinkNav";
 import Navbar from "@/components/Navbar";
 
-type User = {
-  id: string;
-  username: string;
-  email: string;
-  avatar: string | null;
-};
-
 function AppShell({
   user,
   children,
 }: {
-  user: User;
+  user: IUser;
   children: React.ReactNode;
 }) {
   return (

@@ -20,24 +20,7 @@ import { Button } from "@/components/ui/button";
 import { deleteColumn } from "@/actions/project.action";
 import { toast } from "sonner";
 import { useState, Fragment } from "react";
-import { ServerInsertedHTMLContext, useRouter } from "next/navigation";
-
-type Tag = { tag: { id: string; name: string; color: string } };
-type Task = {
-  id: string;
-  title: string;
-  description: string | null;
-  priority: string;
-  dueDate: Date | null;
-  order: number;
-  columnId: string;
-  projectId: string;
-  assignee: { id: string; username: string; avatar: string | null } | null;
-  tags: Tag[];
-  _count: { comments: number };
-};
-type Column = { id: string; name: string; order: number; tasks: Task[] };
-type Member = { id: string; username: string; avatar: string | null };
+import { useRouter } from "next/navigation";
 
 const columnAccentColors = [
   "bg-neutral-400",
@@ -56,11 +39,11 @@ function ColumnHeader({
   setConfirmDelete,
   setSelectedColumn,
 }: {
-  column: Column;
+  column: IColumn;
   index: number;
   isViewer: boolean;
   setConfirmDelete: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedColumn: React.Dispatch<React.SetStateAction<Column | null>>;
+  setSelectedColumn: React.Dispatch<React.SetStateAction<IColumn | null>>;
 }) {
   return (
     <div className="flex items-center gap-2 px-3 py-2.5 bg-neutral-100 dark:bg-neutral-900">
@@ -141,15 +124,15 @@ function ProjectViewList({
   members,
   isViewer,
 }: {
-  project: { id: string; columns: Column[] };
-  members: Member[];
+  project: { id: string; columns: IColumn[] };
+  members: IMember[];
   isViewer: boolean;
 }) {
   const doneColumnName = "done";
   const router = useRouter();
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
-  const [selectedColumn, setSelectedColumn] = useState<Column | null>(null);
+  const [selectedColumn, setSelectedColumn] = useState<IColumn | null>(null);
 
   const handleDeleteColumn = async (columnId: string | null) => {
     if (!columnId) return;
