@@ -34,28 +34,6 @@ import {
 } from "@/components/ui/select";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
 
-// type Member = { id: string; username: string; avatar: string | null };
-// type Comment = {
-//   id: string;
-//   content: string;
-//   createdAt: Date;
-//   user: { id: string; username: string; avatar: string | null };
-// };
-// type Task = {
-//   id: string;
-//   title: string;
-//   description: string | null;
-//   priority: string;
-//   dueDate: Date | null;
-//   columnId: string;
-//   projectId: string;
-//   assignee: Member | null;
-//   createdBy: Member;
-//   comments: Comment[];
-//   column: { id: string; name: string };
-//   tags: { tag: { id: string; name: string; color: string } }[];
-// };
-
 const priorityColor: Record<string, string> = {
   LOW: "bg-neutral-100 text-neutral-600",
   MEDIUM: "bg-blue-100 text-blue-700",
@@ -214,9 +192,9 @@ function TaskDetailModal({
               Task not found.
             </div>
           ) : (
-            <div className="space-y-6 p-6">
+            <div className="space-y-4 md:space-y-6 p-6">
               {/* Header */}
-              <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start justify-between">
                 <div className="flex-1 space-y-1">
                   <div className="flex items-center gap-2">
                     <Badge
