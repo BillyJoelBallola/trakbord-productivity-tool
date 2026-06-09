@@ -33,6 +33,9 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
+import { currentUser } from "@/actions/user.action";
+import { usePathname } from "next/navigation";
+import { getWorkspace } from "@/actions/workspace.action";
 
 const priorityColor: Record<string, string> = {
   LOW: "bg-neutral-100 text-neutral-600",
@@ -56,13 +59,18 @@ function TaskDetailModal({
   onTaskUpdated: (task: any) => void;
   onTaskDeleted: (taskId: string, columnId: string) => void;
 }) {
+  const pathname = usePathname();
+  const workspaceSlug = pathname.split("/")[2];
   const [task, setTask] = useState<ITaskModal | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [comment, setComment] = useState("");
   const [isCommenting, setIsCommenting] = useState(false);
+  const [workspaceMember, setWorkspaceMember] = useState<
+    (IMember & { role: string }) | null
+  >(null);
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -71,20 +79,45 @@ function TaskDetailModal({
   const [assigneeId, setAssigneeId] = useState("");
 
   useEffect(() => {
-    const fetchTask = async () => {
-      const data = await getTask(taskId);
-      if (data) {
-        setTask(data as any);
-        setTitle(data.title);
-        setDescription(data.description ?? "");
-        setPriority(data.priority);
-        setDueDate(
-          data.dueDate ? format(new Date(data.dueDate), "yyyy-MM-dd") : "",
-        );
-        setAssigneeId(data.assignee?.id ?? "none");
+    async function fetchTask() {
+      setIsLoading(true);
+
+      try {
+        const [taskData, user, workspace] = await Promise.all([
+          getTask(taskId),
+          currentUser(),
+          getWorkspace(workspaceSlug),
+        ]);
+
+        const member = workspace?.members.find((m) => m.userId === user?.id);
+
+        if (taskData && member) {
+          // member
+          setWorkspaceMember({
+            id: member.userId,
+            username: member.user.username,
+            avatar: member.user.avatar,
+            role: member.role,
+          });
+
+          // task
+          setTask(taskData as any);
+          setTitle(taskData.title);
+          setDescription(taskData.description ?? "");
+          setPriority(taskData.priority);
+          setDueDate(
+            taskData.dueDate
+              ? format(new Date(taskData.dueDate), "yyyy-MM-dd")
+              : "",
+          );
+          setAssigneeId(taskData.assignee?.id ?? "none");
+        }
+      } catch (error) {
+        return toast.error("An error occured.");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    };
+    }
     fetchTask();
   }, [taskId]);
 
@@ -433,14 +466,16 @@ function TaskDetailModal({
                           "Save Changes"
                         )}
                       </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
-                        onClick={() => setConfirmDelete(true)}
-                      >
-                        <Trash2 className="size-4" />
-                        Delete Task
-                      </Button>
+                      {workspaceMember?.role !== "MEMBER" && (
+                        <Button
+                          variant="outline"
+                          className="w-full text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950"
+                          onClick={() => setConfirmDelete(true)}
+                        >
+                          <Trash2 className="size-4" />
+                          Delete Task
+                        </Button>
+                      )}
                     </div>
                   )}
                 </div>

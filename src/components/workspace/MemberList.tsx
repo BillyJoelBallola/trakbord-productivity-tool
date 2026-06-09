@@ -3,12 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { UserPlus, UserMinus, Shield } from "lucide-react";
-import {
-  inviteMember,
-  removeMember,
-  updateMemberRole,
-} from "@/actions/workspace.action";
+import { UserMinus, Shield } from "lucide-react";
+import { removeMember, updateMemberRole } from "@/actions/workspace.action";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,9 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import InputWithLabel from "@/components/input/InputWithLabel";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
+import InviteInput from "@/components/input/InviteInput";
 import { roleColor } from "@/lib/colors";
 
 type Member = {
@@ -41,26 +37,8 @@ function MemberList({
   isOwnerOrAdmin: boolean;
 }) {
   const router = useRouter();
-  const [inviteEmail, setInviteEmail] = useState("");
-  const [isInviting, setIsInviting] = useState(false);
   const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
-
-  const handleInvite = async () => {
-    if (!inviteEmail) return;
-    setIsInviting(true);
-    try {
-      const response = await inviteMember(workspaceId, inviteEmail);
-      if (response.error) return toast.error(response.error);
-      toast.success("Member invited.");
-      setInviteEmail("");
-      router.refresh();
-    } catch {
-      toast.error("An error occurred.");
-    } finally {
-      setIsInviting(false);
-    }
-  };
 
   const handleRemove = async () => {
     if (!confirmRemove) return;
@@ -100,26 +78,7 @@ function MemberList({
         </CardHeader>
         <CardContent className="space-y-4">
           {/* Invite */}
-          {isOwnerOrAdmin && (
-            <div className="flex gap-2">
-              <InputWithLabel
-                id="invite-email"
-                label=""
-                placeholder="Email address"
-                value={inviteEmail}
-                onChange={(v) => setInviteEmail(v as string)}
-                containerClassName="flex-1"
-              />
-              <Button
-                onClick={handleInvite}
-                disabled={isInviting || !inviteEmail}
-                size="icon"
-                className="mt-0 self-end"
-              >
-                <UserPlus className="size-4" />
-              </Button>
-            </div>
-          )}
+          {isOwnerOrAdmin && <InviteInput workspaceId={workspaceId} />}
 
           {/* Member list */}
           <div className="space-y-2">
@@ -142,7 +101,9 @@ function MemberList({
                   </p>
                 </div>
 
-                {isOwnerOrAdmin && role !== "OWNER" ? (
+                {isOwnerOrAdmin &&
+                role !== "OWNER" &&
+                user.id !== currentUserId ? (
                   <Select
                     defaultValue={role}
                     onValueChange={(v) => handleRoleChange(user.id, v)}

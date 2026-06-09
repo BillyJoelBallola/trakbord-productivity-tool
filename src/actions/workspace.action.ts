@@ -296,3 +296,21 @@ export async function leaveWorkspace(workspaceId: string) {
     return { error: "An error occurred while leaving workspace." };
   }
 }
+
+export async function searchUsers(query: string) {
+  const user = await currentUser();
+  if (!user) return [];
+  if (query.length < 3) return [];
+
+  return prisma.user.findMany({
+    where: {
+      OR: [
+        { email: { contains: query, mode: "insensitive" } },
+        { username: { contains: query, mode: "insensitive" } },
+      ],
+      NOT: { id: user.id },
+    },
+    select: { id: true, username: true, email: true },
+    take: 5,
+  });
+}
