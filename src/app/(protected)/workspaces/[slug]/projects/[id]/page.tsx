@@ -30,6 +30,7 @@ export default async function ProjectPage({
       <ProjectHeader
         project={project}
         workspaceSlug={slug}
+        isViewer={isViewer ?? false}
         activeView={view}
         isOwnerOrAdmin={
           myMember?.role === "OWNER" || myMember?.role === "ADMIN"

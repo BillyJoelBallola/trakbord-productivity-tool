@@ -23,12 +23,14 @@ function ProjectHeader({
   project,
   workspaceSlug,
   isOwnerOrAdmin,
+  isViewer,
   activeView,
 }: {
   project: Project;
   workspaceSlug: string;
   isOwnerOrAdmin: boolean;
   activeView: string;
+  isViewer: boolean;
 }) {
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -100,7 +102,7 @@ function ProjectHeader({
               key={href}
               size="sm"
               variant="ghost"
-              className={cn(activeView.includes(href) && "text-indigo-500")}
+              className={cn(activeView === href && "text-indigo-500")}
               asChild
             >
               <Link href={`?view=${href}`}>
@@ -110,7 +112,7 @@ function ProjectHeader({
             </Button>
           ))}
         </div>
-        {activeView.includes("list") && (
+        {activeView === "list" && !isViewer && (
           <AddColumnDialog projectId={project.id} />
         )}
       </div>

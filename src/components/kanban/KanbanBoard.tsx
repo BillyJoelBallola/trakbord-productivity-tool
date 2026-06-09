@@ -349,7 +349,6 @@ function KanbanBoard({
           )}
         </DragOverlay>
 
-        {/* 👇 moved inside DndContext */}
         {!isViewer && (
           <AddColumnButton
             projectId={project.id}
