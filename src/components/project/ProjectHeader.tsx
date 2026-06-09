@@ -105,7 +105,7 @@ function ProjectHeader({
             >
               <Link href={`?view=${href}`}>
                 <Icon className="size-4" />
-                <span>{label}</span>
+                <span className="hidden md:block">{label}</span>
               </Link>
             </Button>
           ))}
