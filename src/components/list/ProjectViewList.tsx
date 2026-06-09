@@ -1,13 +1,14 @@
+"use client";
+
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Calendar, MessageSquare, Plus } from "lucide-react";
-import { format } from "date-fns";
+import { MessageSquare } from "lucide-react";
+import { TaskRow } from "@/components/list/TaskRow";
+import { AddTaskRow } from "@/components/list/AddTaskRow";
 
 type Tag = { tag: { id: string; name: string; color: string } };
 type Task = {
@@ -26,16 +27,62 @@ type Task = {
 type Column = { id: string; name: string; order: number; tasks: Task[] };
 type Member = { id: string; username: string; avatar: string | null };
 
-const priorityConfig: Record<string, { dot: string; label: string }> = {
-  LOW: {
-    dot: "bg-neutral-300 dark:bg-neutral-600",
-    label: "text-neutral-400 dark:text-neutral-500",
-  },
-  MEDIUM: { dot: "bg-blue-400", label: "text-blue-500 dark:text-blue-400" },
-  HIGH: { dot: "bg-orange-400", label: "text-orange-500 dark:text-orange-400" },
-  URGENT: { dot: "bg-red-500", label: "text-red-500 dark:text-red-400" },
-};
+const columnAccentColors = [
+  "bg-neutral-400",
+  "bg-blue-400",
+  "bg-yellow-400",
+  "bg-green-500",
+  "bg-purple-400",
+  "bg-pink-400",
+];
 
+// Column header
+function ColumnHeader({ column, index }: { column: Column; index: number }) {
+  return (
+    <div className="flex items-center gap-2 px-3 py-2.5 bg-neutral-100 dark:bg-neutral-900">
+      <div
+        className={`w-0.5 h-4 rounded-none shrink-0 ${
+          columnAccentColors[index % columnAccentColors.length]
+        }`}
+      />
+      <AccordionTrigger className="z-20 p-0 [&>svg]:ml-auto">
+        <div className="flex items-center gap-2">
+          <span className="font-medium text-neutral-700 dark:text-neutral-300">
+            {column.name}
+          </span>
+          <span className="text-[11px] text-muted-foreground border border-neutral-200 dark:border-neutral-700 px-1.5 py-px rounded-full">
+            {column.tasks.length}
+          </span>
+        </div>
+      </AccordionTrigger>
+    </div>
+  );
+}
+
+// Table header row
+function TableHeader() {
+  return (
+    <div className="grid grid-cols-[1fr_80px_100px] md:grid-cols-[1fr_80px_100px_80px_60px] gap-0 px-3 py-1.5 border-b border-neutral-100 dark:border-neutral-800 bg-neutral-50/50 dark:bg-neutral-900/50">
+      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide pl-4">
+        Task
+      </span>
+      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide text-center">
+        Assignee
+      </span>
+      <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide text-center">
+        Due date
+      </span>
+      <span className="hidden md:block text-[11px] font-medium text-muted-foreground uppercase tracking-wide text-center">
+        Priority
+      </span>
+      <span className="hidden md:block text-[11px] font-medium text-muted-foreground uppercase tracking-wide text-center">
+        <MessageSquare className="size-3 mx-auto" />
+      </span>
+    </div>
+  );
+}
+
+// Main component
 function ProjectViewList({
   project,
   members,
@@ -45,87 +92,53 @@ function ProjectViewList({
   members: Member[];
   isViewer: boolean;
 }) {
+  const doneColumnName = "done";
+
   return (
-    <Accordion
-      className="space-y-4"
-      type="multiple"
-      defaultValue={["notifications"]}
-    >
-      {project.columns.map((item) => (
-        <AccordionItem key={item.id} value={item.id}>
-          <div className="bg-neutral-100 dark:bg-neutral-900 rounded-lg grid grid-cols-[35px_1fr] items-center gap-2 p-2">
-            <Button variant="outline" size="sm">
-              <Plus className="size-4" />
-            </Button>
-            <AccordionTrigger className="p-0 flex items-center">
-              <div className="flex items-center gap-2">
-                <span className="text-sm font-semibold">{item.name}</span>
-                <span className="text-xs text-muted-foreground bg-neutral-200 dark:bg-neutral-700 px-1.5 py-0.5 rounded-full">
-                  {item.tasks.length}
-                </span>
-              </div>
-            </AccordionTrigger>
-          </div>
-          <AccordionContent className="h-fit">
-            {item.tasks.map((task) => {
-              const p = priorityConfig[task.priority] ?? priorityConfig.MEDIUM;
-              const isOverdue =
-                task.dueDate && new Date(task.dueDate) < new Date();
+    <div className="border border-neutral-200 dark:border-neutral-800 rounded-xl overflow-hidden">
+      <Accordion
+        type="multiple"
+        defaultValue={project.columns.map((c) => c.id)}
+      >
+        {project.columns.map((column, index) => {
+          const isDone = column.name.toLowerCase() === doneColumnName;
 
-              return (
-                <div
-                  key={task.id}
-                  className="flex items-center justify-between border-b p-3"
-                >
-                  <h1>{task.title}</h1>
+          return (
+            <AccordionItem
+              key={column.id}
+              value={column.id}
+              className="border-b border-neutral-200 dark:border-neutral-800 last:border-0"
+            >
+              <ColumnHeader column={column} index={index} />
 
-                  <div className="flex items-center gap-4">
-                    {/* Due date */}
-                    {task.dueDate && (
-                      <span
-                        className={`flex items-center gap-1 text-xs ${
-                          isOverdue
-                            ? "text-red-500"
-                            : "text-neutral-400 dark:text-neutral-500"
-                        }`}
-                      >
-                        <Calendar className="size-3" />
-                        {format(new Date(task.dueDate), "MMM d")}
-                      </span>
-                    )}
+              <AccordionContent className="p-0">
+                <TableHeader />
 
-                    {/* Priority label */}
-                    <div className="flex items-center gap-1">
-                      <div className={`size-2 rounded-full ${p.dot}`} />
-                      <span className={`text-xs font-medium ${p.label}`}>
-                        {task.priority}
-                      </span>
-                    </div>
+                {column.tasks.length === 0 ? (
+                  <p className="text-xs text-muted-foreground px-5 py-3">
+                    No tasks in this column.
+                  </p>
+                ) : (
+                  column.tasks.map((task) => (
+                    <TaskRow
+                      key={task.id}
+                      task={task}
+                      isViewer={isViewer}
+                      members={members}
+                      isDone={isDone}
+                    />
+                  ))
+                )}
 
-                    {/* Comments */}
-                    {task._count.comments > 0 && (
-                      <span className="flex items-center gap-1 text-xs text-neutral-400 dark:text-neutral-500">
-                        <MessageSquare className="size-3" />
-                        {task._count.comments}
-                      </span>
-                    )}
-
-                    {/* Assignee */}
-                    {task.assignee && (
-                      <Avatar className="size-5">
-                        <AvatarFallback className="text-[10px] font-medium bg-indigo-50 text-indigo-600 dark:bg-indigo-950 dark:text-indigo-400">
-                          {task.assignee.username.slice(0, 2).toUpperCase()}
-                        </AvatarFallback>
-                      </Avatar>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-          </AccordionContent>
-        </AccordionItem>
-      ))}
-    </Accordion>
+                {!isViewer && (
+                  <AddTaskRow columnId={column.id} projectId={project.id} />
+                )}
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
+      </Accordion>
+    </div>
   );
 }
 

@@ -116,7 +116,7 @@ function KanbanColumn({
         <div className="flex items-center justify-between px-3 py-2 border-b">
           <div className="flex items-center gap-2">
             <span className="text-sm font-semibold">{column.name}</span>
-            <span className="text-xs text-muted-foreground bg-neutral-200 dark:bg-neutral-700 px-1.5 py-0.5 rounded-full">
+            <span className="text-[11px] text-muted-foreground border border-neutral-200 dark:border-neutral-700 px-1.5 py-px rounded-full">
               {column.tasks.length}
             </span>
           </div>

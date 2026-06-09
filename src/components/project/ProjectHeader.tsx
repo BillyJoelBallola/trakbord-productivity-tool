@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { ArrowLeft, List, SquareKanban, Trash2 } from "lucide-react";
-import { deleteProject } from "@/actions/project.action";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, List, Plus, SquareKanban, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
-import EditProjectDialog from "../dialog/EditProjectDialog";
-import Link from "next/link";
+import EditProjectDialog from "@/components/dialog/EditProjectDialog";
+import { deleteProject } from "@/actions/project.action";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
 
 type Project = {
   id: string;
@@ -92,15 +92,30 @@ function ProjectHeader({
         )}
       </div>
 
-      <div className="flex items-center gap-2">
-        {viewLinks.map(({ href, label, icon: Icon }) => (
-          <Button key={href} variant="outline" size="sm" asChild>
-            <Link href={`?view=${href}`}>
-              <Icon className="size-4" />
-              <span>{label}</span>
-            </Link>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2 w-fit bg-neutral-100 dark:bg-neutral-900 p-1 rounded-lg">
+          {viewLinks.map(({ href, label, icon: Icon }) => (
+            <Button
+              key={href}
+              size="sm"
+              variant="ghost"
+              className={cn(activeView.includes(href) && "text-indigo-500")}
+              asChild
+            >
+              <Link href={`?view=${href}`}>
+                <Icon className="size-4" />
+                <span>{label}</span>
+              </Link>
+            </Button>
+          ))}
+        </div>
+        {/* TODO: Add column function */}
+        {activeView.includes("list") && (
+          <Button variant="outline" size="sm">
+            <Plus className="size-4" />
+            <span className="hidden md:block">Add Column</span>
           </Button>
-        ))}
+        )}
       </div>
 
       <ConfirmDialog

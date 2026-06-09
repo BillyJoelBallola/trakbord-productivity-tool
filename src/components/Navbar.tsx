@@ -13,7 +13,7 @@ const navLinks = [
 
 function Navbar({ username, email }: { username?: string; email?: string }) {
   return (
-    <div className="sticky top-0 right-0 left-0 py-2 px-4 md:px-12 bg-neutral-50 dark:bg-neutral-900 border-b">
+    <div className="sticky z-50 top-0 right-0 left-0 py-2 px-4 md:px-12 bg-neutral-50 dark:bg-neutral-900 border-b">
       <div className="flex items-center justify-between">
         {/* mobile nav */}
         <div className="block md:hidden">
