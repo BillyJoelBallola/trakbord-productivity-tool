@@ -20,11 +20,6 @@ import {
   addComment,
   deleteComment,
 } from "@/actions/task.action";
-import { pusherClient } from "@/lib/pusher-client";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -32,17 +27,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { getCurrentWorkspaceMember } from "@/actions/workspace.action";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import ConfirmDialog from "@/components/dialog/ConfirmDialog";
-import { currentUser } from "@/actions/user.action";
+import { priorityColor } from "@/lib/priorityConfig";
+import { Textarea } from "@/components/ui/textarea";
+import { pusherClient } from "@/lib/pusher-client";
+import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { getWorkspace } from "@/actions/workspace.action";
-
-const priorityColor: Record<string, string> = {
-  LOW: "bg-neutral-100 text-neutral-600",
-  MEDIUM: "bg-blue-100 text-blue-700",
-  HIGH: "bg-orange-100 text-orange-700",
-  URGENT: "bg-red-100 text-red-700",
-};
+import { Badge } from "@/components/ui/badge";
 
 function TaskDetailModal({
   taskId,
@@ -79,46 +72,42 @@ function TaskDetailModal({
   const [assigneeId, setAssigneeId] = useState("");
 
   useEffect(() => {
-    async function fetchTask() {
-      setIsLoading(true);
+    let cancelled = false;
 
+    async function fetchData() {
+      setIsLoading(true);
       try {
-        const [taskData, user, workspace] = await Promise.all([
+        const [taskData, member] = await Promise.all([
           getTask(taskId),
-          currentUser(),
-          getWorkspace(workspaceSlug),
+          getCurrentWorkspaceMember(workspaceSlug),
         ]);
 
-        const member = workspace?.members.find((m) => m.userId === user?.id);
-
-        if (taskData && member) {
-          // member
-          setWorkspaceMember({
-            id: member.userId,
-            username: member.user.username,
-            avatar: member.user.avatar,
-            role: member.role,
-          });
-
-          // task
-          setTask(taskData as any);
-          setTitle(taskData.title);
-          setDescription(taskData.description ?? "");
-          setPriority(taskData.priority);
-          setDueDate(
-            taskData.dueDate
-              ? format(new Date(taskData.dueDate), "yyyy-MM-dd")
-              : "",
-          );
-          setAssigneeId(taskData.assignee?.id ?? "none");
+        if (!cancelled) {
+          if (taskData) {
+            setTask(taskData as any);
+            setTitle(taskData.title);
+            setDescription(taskData.description ?? "");
+            setPriority(taskData.priority);
+            setDueDate(
+              taskData.dueDate
+                ? format(new Date(taskData.dueDate), "yyyy-MM-dd")
+                : "",
+            );
+            setAssigneeId(taskData.assignee?.id ?? "none");
+          }
+          if (member) setWorkspaceMember(member);
         }
-      } catch (error) {
-        return toast.error("An error occured.");
+      } catch {
+        if (!cancelled) toast.error("An error occurred.");
       } finally {
-        setIsLoading(false);
+        if (!cancelled) setIsLoading(false);
       }
     }
-    fetchTask();
+
+    fetchData();
+    return () => {
+      cancelled = true;
+    };
   }, [taskId]);
 
   // real-time comments

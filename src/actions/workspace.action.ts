@@ -314,3 +314,38 @@ export async function searchUsers(query: string) {
     take: 5,
   });
 }
+
+export async function getCurrentWorkspaceMember(workspaceSlug: string) {
+  const user = await currentUser();
+  if (!user) return null;
+
+  const workspace = await prisma.workspace.findFirst({
+    where: {
+      slug: workspaceSlug,
+      members: { some: { userId: user.id } },
+    },
+    select: {
+      members: {
+        where: { userId: user.id },
+        select: {
+          role: true,
+          user: {
+            select: { id: true, username: true, avatar: true },
+          },
+        },
+      },
+    },
+  });
+
+  if (!workspace) return null;
+
+  const member = workspace.members[0];
+  if (!member) return null;
+
+  return {
+    id: member.user.id,
+    username: member.user.username,
+    avatar: member.user.avatar,
+    role: member.role,
+  };
+}
