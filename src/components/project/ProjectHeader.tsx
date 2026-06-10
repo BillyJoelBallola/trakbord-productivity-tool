@@ -51,7 +51,7 @@ function ProjectHeader({
   return (
     <>
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1 md:gap-3">
+        <div className="flex items-center gap-1 md:gap-3 truncate whitespace-nowrap">
           <Button
             variant="ghost"
             size="icon"
@@ -63,10 +63,14 @@ function ProjectHeader({
             className="size-4 rounded-full shrink-0"
             style={{ backgroundColor: project.color }}
           />
-          <div>
-            <h1 className="text-md md:text-xl font-semibold">{project.name}</h1>
+
+          <div className="min-w-0">
+            <h1 className="text-md md:text-xl font-semibold truncate">
+              {project.name}
+            </h1>
+
             {project.description && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground truncate">
                 {project.description}
               </p>
             )}

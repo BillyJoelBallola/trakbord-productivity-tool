@@ -3,8 +3,8 @@ import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import TaskDetailModal from "@/components/kanban/TaskDetailModal";
 import { Calendar, MessageSquare } from "lucide-react";
-import { format } from "date-fns";
 import { priorityConfig } from "@/lib/priorityConfig";
+import { format } from "date-fns";
 
 export function TaskRow({
   task,
