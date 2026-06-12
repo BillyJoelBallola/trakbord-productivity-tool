@@ -252,7 +252,7 @@ export default async function Home() {
 
         {/* Footer note */}
         <p className="text-center text-xs text-muted-foreground border-t pt-6">
-          Design & Built by Billy Joel © {new Date().getFullYear()} Resumiq. All
+          Design & Built by Billy Joel © {new Date().getFullYear()} Trakbord. All
           rights reserved.
         </p>
       </div>
